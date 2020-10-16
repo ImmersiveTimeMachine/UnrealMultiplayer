@@ -31,7 +31,7 @@ public:
 	void InGameLoadMenu();
 
 	UFUNCTION(Exec)
-	void Host() override;
+	void Host(FString ServerName) override;
 
 	UFUNCTION(Exec)
 	virtual void Join(uint32 Index)  override;
@@ -45,7 +45,7 @@ private:
 	TSubclassOf<class UUserWidget> InGameMenuClass;
 	IOnlineSessionPtr SessionInterface;
 	TSharedPtr<class FOnlineSessionSearch> SessionSearch;
-
+	
 	class UMainMenu* Menu;
 
 	void OnCreateSessionComplete(FName SessionName, bool Success);
@@ -53,5 +53,7 @@ private:
 	void OnFindSessionComplete(bool Success);
 	void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
 
+	FString DesiredServerName;
 	void CreateSesion();
+
 };
