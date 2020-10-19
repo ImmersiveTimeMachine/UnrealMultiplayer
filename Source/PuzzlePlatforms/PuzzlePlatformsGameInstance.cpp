@@ -108,7 +108,7 @@ void UPuzzlePlatformsGameInstance::OnFindSessionComplete(bool Success)
 			FServerData Data;
 			Data.Name = SearchResult.GetSessionIdStr();
 			Data.MaxPlayers = SearchResult.Session.SessionSettings.NumPublicConnections;
-			Data.CurrentPlayers = SearchResult.Session.NumOpenPrivateConnections;
+			Data.CurrentPlayers = Data.MaxPlayers - SearchResult.Session.NumOpenPublicConnections;
 			Data.HostUserName = SearchResult.Session.OwningUserName;
 			FString ServerName;
 			if (SearchResult.Session.SessionSettings.Get(SERVER_NAME_SETTINGS_KEY, ServerName))
@@ -158,7 +158,7 @@ void UPuzzlePlatformsGameInstance::CreateSesion()
 		}
 		else SessionSettings.bIsLANMatch = false;
 
-		SessionSettings.NumPublicConnections = 2;
+		SessionSettings.NumPublicConnections = 5;
 		SessionSettings.bShouldAdvertise = true;
 		SessionSettings.bUsesPresence = true;
 		SessionSettings.Set(SERVER_NAME_SETTINGS_KEY, DesiredServerName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
@@ -180,7 +180,7 @@ void UPuzzlePlatformsGameInstance::OnCreateSessionComplete(FName SessionName, bo
 	UEngine* Engine = GetEngine();
 	if (!ensure(Engine != nullptr)) return;
 
-	Engine->AddOnScreenDebugMessage(0, 20, FColor::Green, TEXT("Hosting"));
+	//Engine->AddOnScreenDebugMessage(0, 20, FColor::Green, TEXT("Hosting"));
 
 	UWorld* World = GetWorld();
 	if (!ensure(World != nullptr)) return;
@@ -221,6 +221,14 @@ void UPuzzlePlatformsGameInstance::Join(uint32 Index)
 		Menu->Teardown();
 	}
 	SessionInterface->JoinSession(0, SESSION_NAME, SessionSearch->SearchResults[Index]);
+}
+
+void UPuzzlePlatformsGameInstance::StartSession()
+{
+	if (SessionInterface.IsValid())
+	{
+		SessionInterface->StartSession(SESSION_NAME);
+	}
 }
 
 void UPuzzlePlatformsGameInstance::LoadMainMenu()
