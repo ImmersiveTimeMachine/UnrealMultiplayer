@@ -10,7 +10,10 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 	++NumberOfPlayers;
 	if (NumberOfPlayers >= 2)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Reached 2 Players !"));
+		UWorld* World = GetWorld();
+		if (!ensure(World != nullptr)) return;
+		bUseSeamlessTravel = true;
+		World->ServerTravel("/Game/PuzzlePlatforms/Maps/Game?listen");
 	}
 }
 
